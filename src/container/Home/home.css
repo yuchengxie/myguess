@@ -49,4 +49,7 @@ body {
     /*height: 800px;*/
     background-color: #61dafb;
 }
+.visable{
+    display: none;
+}
 

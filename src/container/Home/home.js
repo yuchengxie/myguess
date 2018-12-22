@@ -6,6 +6,22 @@ import Eos from 'eosjs';
 
 class Home extends Component {
 
+    constructor(props) {
+        super(props)
+        this.state = {
+            account: ""
+        }
+
+
+    }
+
+    componentDidMount() {
+
+        this.setState({
+            account: "Login"
+        })
+    }
+
     render() {
         document.title = "Guess";
         return (
@@ -37,9 +53,11 @@ class Home extends Component {
                     <button className={"button"}>How to Play</button>
                 </div>
                 <div>
-                    <button className={"button"} onClick={this.handleLogin.bind(this)}>Login</button>
-                    <button className={"button"} onClick={this.logout.bind(this)}>Logout</button>
+                    <button className={"button"} onClick={this.handleLogin.bind(this)}>{this.state.account}</button>
+
                 </div>
+                <button className="visable" onClick={this.logout.bind(this)}>Logout</button>
+
             </div>
         )
     }
@@ -59,10 +77,29 @@ class Home extends Component {
     currentAccount = null;
     connected = false;
 
+    async handleLogin() {
+        await this.connect()
+        await this.login()
+    }
+
     async connect() {
         //change name 'hello-scatter' to your application's name
         this.connected = await ScatterJS.scatter.connect('hello-scatter')
-        console.log(this.connected);
+        console.log("connected:" + this.connected);
+
+    }
+
+    async logout() {
+        ScatterJS.scatter.forgetIdentity().then(res => {
+
+            console.log("logout success")
+            this.setState({
+                account: "Login"
+            })
+        }).catch(err => {
+            console.log(err)
+        })
+        // console.log("logout success")
     }
 
     // login with eos account via scatter
@@ -74,8 +111,12 @@ class Home extends Component {
         try {
             let result = await ScatterJS.scatter.getIdentity({accounts: [this.network]})
             this.currentAccount = result.accounts[0];
-            console.log("login success,", this.currentAccount)
-            alert("login success" + JSON.stringify(this.currentAccount))
+            // console.log("login success,", this.currentAccount)
+            console.log("login success,", JSON.stringify(this.currentAccount))
+            // alert("login success" + JSON.stringify(this.currentAccount))
+            this.setState({
+                account: this.currentAccount["name"]
+            })
         } catch (e) {
             alert("login fail")
             console.log("login fail,", e)
@@ -160,15 +201,6 @@ class Home extends Component {
         }
     }
 
-    async logout() {
-        ScatterJS.scatter.forgetIdentity()
-        console.log("logout success")
-    }
-
-    async handleLogin() {
-        await this.connect()
-        await this.login()
-    }
 
 }
 

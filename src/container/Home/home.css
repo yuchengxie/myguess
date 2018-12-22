@@ -1,0 +1,52 @@
+body {
+    margin: 0px;
+    padding: 0px;
+}
+.container {
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 16px;
+    margin-right: 16px;
+    /*background-color: #61dafb;*/
+}
+.header {
+    background-color: #282c34;
+    flex: 1;
+}
+
+.log{
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+.img{
+    height: 40px;
+    width: 40px;
+    background-color: transparent;
+}
+.logtitle{
+    font-size: 16px;
+    /*font-weight: bold;*/
+    color: lightcoral;
+}
+.detail{
+    display: flex;
+}
+.button{
+    width: 120px;
+    height: 35px;
+    background-color: transparent;
+    color: white;
+    font-size: 16px;
+    border: 1px solid #61dafb;
+    display: block;
+    border-radius: 20px;
+    outline:none;
+}
+.content{
+    /*height: 800px;*/
+    background-color: #61dafb;
+}
+

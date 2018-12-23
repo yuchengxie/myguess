@@ -4,22 +4,17 @@ import ScatterJS from 'scatter-js/dist/scatter.esm';
 import Eos from 'eosjs';
 
 
-class Home extends Component {
+let scatter = null
+let identity = null
+let acc = ""
+
+class Home extends Component <> {
 
     constructor(props) {
         super(props)
         this.state = {
             account: ""
         }
-
-
-    }
-
-    componentDidMount() {
-
-        this.setState({
-            account: "Login"
-        })
     }
 
     render() {
@@ -32,9 +27,6 @@ class Home extends Component {
                 <div className={"contents"}>
 
                 </div>
-                <footer>
-                    <text>copyright by mixer!</text>
-                </footer>
             </div>
         );
     }
@@ -53,23 +45,24 @@ class Home extends Component {
                     <button className={"button"}>How to Play</button>
                 </div>
                 <div>
-                    <button className={"button"} onClick={this.handleLogin.bind(this)}>{this.state.account}</button>
+                    <button className={"button"}
+                            onClick={this.handleLogin.bind(this)}>{this.state.account}</button>
 
                 </div>
-                <button className="visable" onClick={this.logout.bind(this)}>Logout</button>
+
+                {
+                    this.state.account == "Login" ? (
+                        <button className="button pos unvisable"
+                                onClick={this.logout.bind(this)}>Logout</button>) : (
+                        <button className="button pos visable" onClick={this.logout.bind(this)}>Logout</button>)
+                }
 
             </div>
         )
     }
 
+
     network = {
-        // blockchain: 'eos',
-        // protocol: 'https',
-        // host: 'mainnet.meet.one',
-        // port: 443,
-        // chainId: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906'
-        // blockchain: 'eos',
-        // protocol: 'https',
         protocol: 'https',
         httpEndpoint: 'https://kylin.eoscanada.com',
         chainId: '5fff1dae8dc8e2fc4d5b23b2c7665c97f9e9d8edf2b6485a86ba311c25639191',
@@ -77,35 +70,86 @@ class Home extends Component {
     currentAccount = null;
     connected = false;
 
+
+    componentDidMount() {
+        // document.addEventListener('scatterLoaded', function (scatterExtension) {
+        //     let id = window.scatter.identity
+        //     // const eos = window.scatter.eos("", "", "", 'https');
+        //     // eos.transaction([{}]).then(r1 => {
+        //     //     console.log("r1:", r1)
+        //     // });
+        //     // eos.getAccount("eosio").then(r2 => {
+        //     //     console.log("r2:", r2)
+        //     // });
+        //     //
+        //     // eos.getCurrencyBalance('eosio.token', "eosio", 'EOS').then(r3 => {
+        //     //     console.log("r3:", r3)
+        //     // });
+        //     if (id != null) {
+        //         acc = id.accounts[0]["name"]
+        //     }
+        //     console.log("id:", id)
+        //     console.log("acc:", acc)
+        //
+        //
+        //     // if (scatter == null) {
+        //     //     alert("请先安装scatter");
+        //     // } else {
+        //     //     alert("scatter working");
+        //     // }
+        // });
+
+        // let id = window.scatter.identity
+        // if (id != null) {
+        //     acc = id.accounts[0]["name"]
+        // }
+        //
+        // console.log("id:", id)
+        // console.log("acc:", acc)
+        // console.log("acc after:", acc)
+        // this.setState({
+        //     account: "Login"
+        // })
+        //  this.setState({
+        //     account: acc
+        // })
+        // ScatterJS.scatter.getIdentity({accounts: [this.network]})
+        // this.init()
+        // this.connect()
+
+        ScatterJS.scatter.getIdentity({accounts:this.network}).then(() => {
+            let accountName = scatter.identity.accounts[0].name;
+        })
+
+        this.setState({
+            account: "Login"
+        })
+    }
+
     async handleLogin() {
-        await this.connect()
-        await this.login()
+        this.connect()
+        this.login()
+        // if (this.state.account == "Login") {
+        //     await this.connect()
+        //     await this.login()
+        // } else {
+        //
+        // }
+
     }
 
     async connect() {
-        //change name 'hello-scatter' to your application's name
-        this.connected = await ScatterJS.scatter.connect('hello-scatter')
+        this.connected = await ScatterJS.scatter.connect('myguess')
         console.log("connected:" + this.connected);
 
     }
 
-    async logout() {
-        ScatterJS.scatter.forgetIdentity().then(res => {
-
-            console.log("logout success")
-            this.setState({
-                account: "Login"
-            })
-        }).catch(err => {
-            console.log(err)
-        })
-        // console.log("logout success")
-    }
 
     // login with eos account via scatter
     async login() {
         if (!this.connected) {
             console.log('not connected');
+            console.log('is connected');
             return;
         }
         try {
@@ -121,6 +165,20 @@ class Home extends Component {
             alert("login fail")
             console.log("login fail,", e)
         }
+    }
+
+
+    async logout() {
+        ScatterJS.scatter.forgetIdentity().then(res => {
+
+            console.log("logout success")
+            this.setState({
+                account: "Login"
+            })
+        }).catch(err => {
+            console.log(err)
+        })
+        // console.log("logout success")
     }
 
     async transfer() {
